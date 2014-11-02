@@ -1,10 +1,14 @@
 
+from gge.NullInputObject import NullInputObject
+
 class GenericGameEngine(object):
     def __init__(self):
         self.__game_objects = set()
         self.__del_game_objects = set()
         self.__running = False
         self.__fps = 60
+        self.__input_object = None
+        self.setInputObjectType(NullInputObject)
 
     def newGameObject(self, ObjectType):
         """Creates and returns a new GameObject of the given type."""
@@ -38,8 +42,21 @@ class GenericGameEngine(object):
     def getFPS(self):
         return self.__fps
 
+    def setInputObjectType(self, InputObjectType):
+        """The type of object that updates user input. Should be a subclass of
+        GameObject and contain an InputAttribute attribute."""
+        self.__input_object = InputObjectType(self)
+
+    def getInputObject(self):
+        return self.__input_object
+
+    def getInputState(self, button):
+        return self.__input_state.get(button, False)
+
     def __updateLoop(self):
         while self.__running:
+            self.__input_object.update(0)
+            
             for obj in self.__game_objects:
                 obj.update(0)
 
