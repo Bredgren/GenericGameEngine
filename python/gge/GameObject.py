@@ -29,3 +29,6 @@ class GameObject(object):
         """"""
         if AttributeType in self.__attributes:
             del self.__attributes[AttributeType]
+
+    def update(self, dt):
+        pass

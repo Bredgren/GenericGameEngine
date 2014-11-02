@@ -2,7 +2,8 @@
 from gge.GenericGameEngine import GenericGameEngine
 from gge.GameObject import GameObject
 
-def runTest():
+def testGameObject():
+    print "Testing GameObject"
     gge = GenericGameEngine()
     objs = gge.getGameObjects()
     assert len(objs) == 0
@@ -25,6 +26,44 @@ def runTest():
     gge.delGameObject(go2)
     objs = gge.getGameObjects()
     assert len(objs) == 0
+
+def testFPS():
+    print "Testing FPS"
+    gge = GenericGameEngine()
+    
+    gge.setFPS(30)
+    assert gge.getFPS() == 30
+    
+    gge.setFPS(20)
+    assert gge.getFPS() == 20
+
+def testRunning():
+    print "Testing Running"
+    class Obj(GameObject):
+        def __init__(self, gge):
+            super(Obj, self).__init__(gge)
+            self.count = 0
+            
+        def update(self, dt):
+            self.count += 1
+            if self.count >= 10:
+                self.gge.delGameObject(self)
+                # Shouldn't be actually deleted just yet
+                objs = self.gge.getGameObjects()
+                assert self in objs
+                self.gge.setRunning(False)
+
+    gge = GenericGameEngine()
+    obj = gge.newGameObject(Obj)
+    gge.setRunning(True)
+    # Should be removed by the time setRunning returns
+    objs = gge.getGameObjects()
+    assert obj not in objs
+    
+def runTest():
+    testGameObject()
+    testFPS()
+    testRunning()
     
 if __name__ == "__main__":
     runTest()
