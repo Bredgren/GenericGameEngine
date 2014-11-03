@@ -37,9 +37,11 @@ class GameObject(object):
         return self.__attributes.copy()
 
     def delAttribute(self, AttributeType):
-        """"""
         if AttributeType in self.__attributes:
             del self.__attributes[AttributeType]
+
+    def getDisplayRepresentation(self):
+        return None
 
     def update(self, dt):
         pass

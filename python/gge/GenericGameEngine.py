@@ -1,5 +1,6 @@
 
 from gge.NullInputObject import NullInputObject
+from gge.NullDisplayObject import NullDisplayObject
 
 class GenericGameEngine(object):
     def __init__(self):
@@ -8,7 +9,10 @@ class GenericGameEngine(object):
         self.__running = False
         self.__fps = 60
         self.__input_object = None
+        self.__display_object = None
+
         self.setInputObjectType(NullInputObject)
+        self.setDisplayObjectType(NullDisplayObject)
 
     def newGameObject(self, ObjectType):
         """Creates and returns a new GameObject of the given type."""
@@ -50,13 +54,18 @@ class GenericGameEngine(object):
     def getInputObject(self):
         return self.__input_object
 
-    def getInputState(self, button):
-        return self.__input_state.get(button, False)
+    def setDisplayObjectType(self, DisplayObjectType):
+        """The type of object that controls the display. Should be a subclass of
+        GameObject."""
+        self.__display_object = DisplayObjectType(self)
+
+    def getDisplayObject(self):
+        return self.__display_object
 
     def __updateLoop(self):
         while self.__running:
             self.__input_object.update(0)
-            
+
             for obj in self.__game_objects:
                 obj.update(0)
 
@@ -65,4 +74,4 @@ class GenericGameEngine(object):
             self.__game_objects.difference_update(self.__del_game_objects)
             self.__del_game_objects.clear()
 
-    
+            self.__display_object.update(0)
