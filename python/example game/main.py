@@ -8,6 +8,7 @@ except ImportError:
 from gge.GenericGameEngine import GenericGameEngine
 from gge.PygameInputObject import PygameInputObject
 from gge.PygameDisplayObject import PygameDisplayObject
+from gge.DisplayTypes import Resolution
 from gge.InputAttribute import InputAttribute
 
 import pygame
@@ -24,7 +25,8 @@ class Main(object):
         input_attribute = input_object.getAttribute(InputAttribute)
         input_attribute.newListener(self.inputListener)
 
-        # display_object = self.gge.getDisplayObject()
+        display_object = self.gge.getDisplayObject()
+        display_object.setAttribute(Resolution, value=(600, 400))
 
     def inputListener(self, key, value):
         if value and key in [ "quit", "escape" ]:

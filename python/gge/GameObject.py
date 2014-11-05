@@ -1,12 +1,16 @@
 
 class GameObject(object):
+    """Represents some element of a game. All meaningfull state should be stored in
+    attributes, preferably existing attributes. If new attributes need to be made
+    they should be as general as possible so they can be reused. To be visible on
+    screen it must provide a DisplayRepresentation attribute."""
     def __init__(self, gge):
         self.gge = gge
         self.__attributes = {}
 
     def setAttribute(self, AttributeType, key=None, value=None):
         """Sets the given attribute to the given value. Creates it if it
-        doesn't exist. Leave key=None to set singleton attributes"""
+        doesn't exist. Leave key=None to set singleton attributes."""
         if AttributeType in self.__attributes:
             attr = self.__attributes[AttributeType]
             if key != None:
@@ -39,9 +43,6 @@ class GameObject(object):
     def delAttribute(self, AttributeType):
         if AttributeType in self.__attributes:
             del self.__attributes[AttributeType]
-
-    def getDisplayRepresentation(self):
-        return None
 
     def update(self, dt):
         pass
