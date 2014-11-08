@@ -1,10 +1,13 @@
 
 from gge.GameObject import GameObject
-from gge.DisplayTypes import Resolution
+from gge.DisplayTypes import Resolution, DisplayRep
+from gge.Types import Position
 
 import pygame
 
-from collections import defaultdict
+from collections import defaultdict, namedtuple
+
+PosRep = namedtuple("PosRep", "pos rep")
 
 class PygameDisplayObject(GameObject):
     """Assumes pygame is initialized.
@@ -19,19 +22,64 @@ class PygameDisplayObject(GameObject):
         self.setAttribute(Resolution, value=(100, 100))
 
     def update(self, dt):
-        reps = defaultdict(set)
+        reps_bgd = defaultdict(list)
+        reps_fgd = defaultdict(list)
+        reps_hud = defaultdict(list)
+
         for game_object in self.gge.getGameObjects():
-            rep = game_object.getAttributeValue(DisplayAttribute)
+            rep = game_object.getAttributeValue(DisplayRep)
             if not rep:
                 continue
-            reps[rep["z"]].add(rep)
 
-        for z in sorted(reps.keys()):
-            for rep in reps[z]:
-                self.__drawReperesentation(rep)
+            pos_rep = PosRep(game_object.getAttributeValue(Position), rep)
+            if rep.layer.name == "background":
+                reps_bgd[rep.layer.number].append(pos_rep)
+            elif rep.layer.name == "foreground":
+                reps_fgd[rep.layer.number].append(pos_rep)
+            elif rep.layer.name == "hud":
+                reps_hud[rep.layer.number].append(pos_rep)
 
-    def __drawRepresentation(self, rep):
-        pass
+        self.__display.fill((255, 255, 255))
+
+        self.__drawLayer(reps_bgd)
+        self.__drawLayer(reps_fgd)
+        self.__drawLayer(reps_hud)
+
+        pygame.display.flip()
 
     def __handleResolution(self, value):
         self.__display = pygame.display.set_mode(value)
+
+    def __drawLayer(self, pos_reps):
+        for num in sorted(pos_reps.keys()):
+            for pos_rep in pos_reps[num]:
+                self.__drawRepresentation(pos_rep)
+
+    def __drawRepresentation(self, pos_rep):
+        pos = pos_rep.pos
+        rep = pos_rep.rep
+
+        # images = rep.images
+        # for source, offset in images:
+        #     self.__drawImage(source, offset)
+
+        for shape in rep.shapes:
+            self.__drawShape(pos, shape)
+
+    def __drawShape(self, pos, shape):
+        # print shape.type, shape.color, shape.size, shape.line_width, shape.points, shape.offset
+        x = pos.x + shape.offset.x
+        y = pos.y + shape.offset.y
+        rect = pygame.Rect(x, y, shape.size.w, shape.size.h)
+        self.__display.fill(shape.color.fill.value, rect)
+        if shape.lineWidth > 0:
+            pygame.draw.rect(self.__display, shape.color.line.value, rect,
+                             shape.lineWidth)
+
+    # def __drawImage(self, source, offset):
+    #     print source, offset
+    #     image = self.__getImage(source)
+
+    # def __getImage(self, source):
+    #     # Retrieve or load the image
+    #     return None

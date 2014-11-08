@@ -11,6 +11,8 @@ from gge.PygameDisplayObject import PygameDisplayObject
 from gge.DisplayTypes import Resolution
 from gge.InputAttribute import InputAttribute
 
+from ButtonObject.ButtonObject import ButtonObject
+
 import pygame
 
 class Main(object):
@@ -27,6 +29,8 @@ class Main(object):
 
         display_object = self.gge.getDisplayObject()
         display_object.setAttribute(Resolution, value=(600, 400))
+
+        button = self.gge.newGameObject(ButtonObject)
 
     def inputListener(self, key, value):
         if value and key in [ "quit", "escape" ]:
