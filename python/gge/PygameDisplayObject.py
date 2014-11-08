@@ -66,8 +66,10 @@ class PygameDisplayObject(GameObject):
         for shape in rep.shapes:
             self.__drawShape(pos, shape)
 
+        for text in rep.text:
+            self.__drawText(pos, text)
+
     def __drawShape(self, pos, shape):
-        # print shape.type, shape.color, shape.size, shape.line_width, shape.points, shape.offset
         x = pos.x + shape.offset.x
         y = pos.y + shape.offset.y
         rect = pygame.Rect(x, y, shape.size.w, shape.size.h)
@@ -75,6 +77,15 @@ class PygameDisplayObject(GameObject):
         if shape.lineWidth > 0:
             pygame.draw.rect(self.__display, shape.color.line.value, rect,
                              shape.lineWidth)
+
+    def __drawText(self, pos, text):
+        x = pos.x + text.offset.x
+        y = pos.y + text.offset.y
+        # TODO: cache fonts? (or image)
+        font = pygame.font.SysFont(text.font, text.size)
+        txt = font.render(text.text, True, text.color.value)
+        rect = txt.get_rect(topleft=(x, y))
+        self.__display.blit(txt, rect)
 
     # def __drawImage(self, source, offset):
     #     print source, offset

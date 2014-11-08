@@ -20,10 +20,15 @@ class ButtonObject(GameObject):
         self.__color = DT.ShapeColor(fill=DT.Color(self.DEFAULT_COLOR))
         self.__size = DT.Size(w=100, h=50)
         self.__shape_rep = DT.Shape("rectangle", color=self.__color,
-                                    size=self.__size, lineWidth=5)
+                                    size=self.__size, lineWidth=1)
+
+        self.__text_offset = DT.Offset(10, 10)
+        self.__text = DT.Text("Button", font="courier", size=22,
+                              offset=self.__text_offset)
 
         self.__display_info = DT.DisplayRepType(layer=self.__layer,
-                                                shapes=[self.__shape_rep])
+                                                shapes=[self.__shape_rep],
+                                                text=[self.__text])
 
         self.setAttribute(DT.DisplayRep, value=self.__display_info)
 
@@ -48,8 +53,10 @@ class ButtonObject(GameObject):
             if self.getAttributeValue(MouseWithin):
                 if value:
                     self.__color.fill.value = self.CLICK_COLOR
+                    self.__text_offset.value = (12, 12)
                 else:
                     self.__color.fill.value = self.HOVER_COLOR
+                    self.__text_offset.value = (10, 10)
 
     def __mouseWithinListener(self, value):
         if value:

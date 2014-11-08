@@ -19,19 +19,46 @@ class DisplayRepType(object):
     layer: Layer
     images: [Image, ..]
     shapes: [Shape, ..]
+    text: [Text, ...]
     """
-    __slots__ = ("layer", "images", "shapes")
-    def __init__(self, layer=Layer(), images=[], shapes=[]):
+    __slots__ = ("layer", "images", "shapes", "text")
+    def __init__(self, layer=Layer(), images=[], shapes=[], text=[]):
         self.layer = layer
         self.images = images
         self.shapes = shapes
+        self.text = text
 
 class Offset(object):
-    __slots__ = ("x", "y", "z")
+    __slots__ = ("value")
     def __init__(self, x=0, y=0, z=0):
-        self.x = x
-        self.y = y
-        self.z = z
+        if isinstance(x, tuple):
+            self.value = x
+        else:
+            self.value = (x, y, z)
+
+    @property
+    def x(self):
+        return self.value[0]
+
+    @x.setter
+    def x(self, x):
+        self.value = (x, self.value[1], self.value[2])
+
+    @property
+    def y(self):
+        return self.value[1]
+
+    @y.setter
+    def y(self, y):
+        self.value = (self.value[0], y, self.value[2])
+
+    @property
+    def z(self):
+        return self.value[2]
+
+    @z.setter
+    def z(self, z):
+        self.value = (self.value[0], self.value[1], z)
 
 class Image(object):
     """
@@ -48,8 +75,11 @@ class Color(object):
     r, g, b = 0 - 255
     """
     __slots__ = ("value")
-    def __init__(self, color=(0, 0, 0)):
-        self.value = color
+    def __init__(self, r=0, g=0, b=0):
+        if isinstance(r, tuple):
+            self.value = r
+        else:
+            self.value = (r, g, b)
 
     @property
     def r(self):
@@ -113,11 +143,46 @@ class Shape(object):
         self.offset = offset
 
 class Point(object):
-    __slots__ = ("x", "y", "z")
+    __slots__ = ("value")
     def __init__(self, x=0, y=0, z=0):
-        self.x = x
-        self.y = y
-        self.z = z
+        if isinstance(x, tuple):
+            self.value = x
+        else:
+            self.value = (x, y, z)
+
+    @property
+    def x(self):
+        return self.value[0]
+
+    @x.setter
+    def x(self, x):
+        self.value = (x, self.value[1], self.value[2])
+
+    @property
+    def y(self):
+        return self.value[1]
+
+    @y.setter
+    def y(self, y):
+        self.value = (self.value[0], y, self.value[2])
+
+    @property
+    def z(self):
+        return self.value[2]
+
+    @z.setter
+    def z(self, z):
+        self.value = (self.value[0], self.value[1], z)
+
+class Text(object):
+    __slots__ = ("text", "font", "size", "color", "offset")
+    def __init__(self, text="", font="", size=10, color=Color(),
+                 offset=Offset()):
+        self.text = text
+        self.font = font
+        self.size = size
+        self.color = color
+        self.offset = offset
 
 class Resolution(SingletonAttribute):
     """Value type is Size."""
