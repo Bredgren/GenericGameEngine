@@ -22,6 +22,9 @@ class GenericGameEngine(object):
 
     def delGameObject(self, object_instance):
         """Deletes the given GameObject instance if it exists."""
+        for attribute in object_instance.getAttributes():
+            object_instance.getAttribute(attribute).clearListeners()
+
         if self.__running:
             # Delete later
             self.__del_game_objects.add(object_instance)

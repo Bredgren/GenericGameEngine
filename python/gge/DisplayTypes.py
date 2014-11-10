@@ -1,6 +1,20 @@
 
 from gge.Attribute import SingletonAttribute
 
+class DisplayRepType(object):
+    """
+    layer: Layer
+    images: [Image, ..]
+    shapes: [Shape, ..]
+    text: [Text, ...]
+    """
+    __slots__ = ("layer", "images", "shapes", "text")
+    def __init__(self, layer=None, images=[], shapes=[], text=[]):
+        self.layer = layer if layer else Layer()
+        self.images = images
+        self.shapes = shapes
+        self.text = text
+
 class Layer(object):
     """
     name: "hud" | "foreground" | "background"
@@ -14,19 +28,46 @@ class Layer(object):
     def __repr__(self):
         return "Layer(name=%r, number=%r)" % (self.name, self.number)
 
-class DisplayRepType(object):
+class Image(object):
     """
-    layer: Layer
-    images: [Image, ..]
-    shapes: [Shape, ..]
-    text: [Text, ...]
+    source: "/path/to/image.png"
+    offset: Offset
     """
-    __slots__ = ("layer", "images", "shapes", "text")
-    def __init__(self, layer=Layer(), images=[], shapes=[], text=[]):
-        self.layer = layer
-        self.images = images
-        self.shapes = shapes
+    __slots__ = ("source", "offset")
+    def __init__(self, source="", offset=None):
+        self.source = source
+        self.offset = offset if offset else Offset()
+
+class Shape(object):
+    """
+    type: "rectangle" | "oval" | "lines" | "polygon"
+    # "rectangle" and "oval" are specified via "size"
+    # "lines" and "polygon" are specified via "points"
+    color: ShapeColor
+    size: Size
+    lineWidth: #
+    points: [Point, ...]
+    offset: Offset
+    """
+    __slots__ = ("type", "color", "size", "lineWidth", "points", "offset")
+    def __init__(self, shape_type="rectangle", color=None,
+                size=None, lineWidth=1,  points=[], offset=None):
+        self.type = shape_type
+        self.color = color if color else ShapeColor()
+        self.size = size if size else Size()
+        self.lineWidth = lineWidth
+        self.points = points
+        self.offset = offset if offset else Offset()
+
+class Text(object):
+    __slots__ = ("text", "font", "size", "color", "offset")
+    def __init__(self, text="", font="", size=10, color=None,
+                 offset=None):
         self.text = text
+        self.font = font
+        self.size = size
+        self.color = color if color else Color()
+        self.offset = offset if offset else Offset()
 
 class Offset(object):
     __slots__ = ("value")
@@ -60,15 +101,15 @@ class Offset(object):
     def z(self, z):
         self.value = (self.value[0], self.value[1], z)
 
-class Image(object):
+class ShapeColor(object):
     """
-    source: "/path/to/image.png"
-    offset: Offset
+    line: Color
+    fill: Color
     """
-    __slots__ = ("source", "offset")
-    def __init__(self, source="", offset=Offset()):
-        self.source = source
-        self.offset = offset
+    __slots__ = ("line", "fill")
+    def __init__(self, line=None, fill=None):
+        self.line = line if line else Color()
+        self.fill = fill if fill else Color()
 
 class Color(object):
     """
@@ -105,42 +146,11 @@ class Color(object):
     def b(self, b):
         self.value = (self.value[0], self.value[1], b)
 
-class ShapeColor(object):
-    """
-    line: Color
-    fill: Color
-    """
-    __slots__ = ("line", "fill")
-    def __init__(self, line=Color(), fill=Color()):
-        self.line = line
-        self.fill = fill
-
 class Size(object):
     __slots__ = ("w", "h")
     def __init__(self, w=0, h=0):
         self.w = w
         self.h = h
-
-class Shape(object):
-    """
-    type: "rectangle" | "oval" | "lines" | "polygon"
-    # "rectangle" and "oval" are specified via "size"
-    # "lines" and "polygon" are specified via "points"
-    color: ShapeColor
-    size: Size
-    lineWidth: #
-    points: [Point, ...]
-    offset: Offset
-    """
-    __slots__ = ("type", "color", "size", "lineWidth", "points", "offset")
-    def __init__(self, shape_type="rectangle", color=ShapeColor(),
-                size=Size(), lineWidth=1,  points=[], offset=Offset()):
-        self.type = shape_type
-        self.color = color
-        self.size = size
-        self.lineWidth = lineWidth
-        self.points = points
-        self.offset = offset
 
 class Point(object):
     __slots__ = ("value")
@@ -173,16 +183,6 @@ class Point(object):
     @z.setter
     def z(self, z):
         self.value = (self.value[0], self.value[1], z)
-
-class Text(object):
-    __slots__ = ("text", "font", "size", "color", "offset")
-    def __init__(self, text="", font="", size=10, color=Color(),
-                 offset=Offset()):
-        self.text = text
-        self.font = font
-        self.size = size
-        self.color = color
-        self.offset = offset
 
 class Resolution(SingletonAttribute):
     """Value type is Size."""

@@ -47,6 +47,9 @@ class PygameDisplayObject(GameObject):
 
         pygame.display.flip()
 
+    def getSystemFonts(self):
+        return pygame.font.get_fonts()
+
     def __handleResolution(self, value):
         self.__display = pygame.display.set_mode(value)
 
