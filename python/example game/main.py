@@ -80,7 +80,7 @@ class Main(object):
         button = self.__newButton()
         button.setAttribute(T.Position, value=T.Point(50, 50))
         button.setText("Play")
-        button.setShapeSize(DT.Size(115, 50))
+        button.setShapeSize(DT.Size(90, 50))
         button.getAttribute(MouseDown).newListener(play)
 
         def settings(value):
@@ -90,7 +90,7 @@ class Main(object):
         button = self.__newButton()
         button.setAttribute(T.Position, value=T.Point(50, 125))
         button.setText("Settings")
-        button.setShapeSize(DT.Size(115, 50))
+        button.setShapeSize(DT.Size(145, 50))
         button.getAttribute(MouseDown).newListener(settings)
 
         def quit(value):
@@ -100,7 +100,7 @@ class Main(object):
         button = self.__newButton()
         button.setAttribute(T.Position, value=T.Point(50, 200))
         button.setText("Quit")
-        button.setShapeSize(DT.Size(115, 50))
+        button.setShapeSize(DT.Size(90, 50))
         button.getAttribute(MouseDown).newListener(quit)
 
     def __setupSettingsMenu(self):
@@ -113,8 +113,41 @@ class Main(object):
         button = self.__newButton()
         button.setAttribute(T.Position, value=T.Point(50, 50))
         button.setText("Back")
-        button.setShapeSize(DT.Size(115, 50))
+        button.setShapeSize(DT.Size(90, 50))
         button.getAttribute(MouseDown).newListener(back)
+
+        def fullscreen(value):
+            if not value:
+                display_object = self.gge.getDisplayObject()
+                fullscreen = display_object.getAttributeValue(DT.Fullscreen)
+                display_object.setAttribute(DT.Fullscreen, value=not fullscreen)
+
+        button = self.__newButton()
+        button.setAttribute(T.Position, value=T.Point(50, 125))
+        button.setText("Toggle Fullscreen")
+        button.setShapeSize(DT.Size(280, 50))
+        button.getAttribute(MouseDown).newListener(fullscreen)
+
+        # TODO: detect system resolution and change options based on that
+        resolutions = [(1366, 768), (1920, 1080), (1280, 800), (1440, 900),
+                       (1280, 1040), (1600, 900)]
+
+        def resolution(res):
+            def f(value):
+                if not value:
+                    display_object = self.gge.getDisplayObject()
+                    display_object.setAttribute(DT.Resolution, value=res)
+            return f
+
+        x = 400
+        y = 50
+        for res in resolutions:
+            button = self.__newButton()
+            button.setAttribute(T.Position, value=T.Point(x, y))
+            button.setText("%dx%d" % res)
+            button.setShapeSize(DT.Size(200, 50))
+            button.getAttribute(MouseDown).newListener(resolution(res))
+            y += 60
 
     def __cleanupMenu(self):
         for button in self.__current_buttons:

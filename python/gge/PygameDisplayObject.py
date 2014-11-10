@@ -1,6 +1,6 @@
 
 from gge.GameObject import GameObject
-from gge.DisplayTypes import Resolution, DisplayRep
+from gge.DisplayTypes import Resolution, Fullscreen, DisplayRep
 from gge.Types import Position
 
 import pygame
@@ -19,7 +19,10 @@ class PygameDisplayObject(GameObject):
         self.setAttribute(Resolution)
         res = self.getAttribute(Resolution)
         res.newListener(self.__handleResolution)
-        self.setAttribute(Resolution, value=(100, 100))
+
+        self.setAttribute(Fullscreen, value=False)
+        full = self.getAttribute(Fullscreen)
+        full.newListener(self.__handleFullscreen)
 
     def update(self, dt):
         reps_bgd = defaultdict(list)
@@ -50,8 +53,18 @@ class PygameDisplayObject(GameObject):
     def getSystemFonts(self):
         return pygame.font.get_fonts()
 
+    def __updateDisplay(self):
+        res = self.getAttributeValue(Resolution)
+        flags = pygame.DOUBLEBUF | pygame.HWSURFACE
+        if self.getAttributeValue(Fullscreen):
+            flags |= pygame.FULLSCREEN
+        self.__display = pygame.display.set_mode(res, flags)
+
     def __handleResolution(self, value):
-        self.__display = pygame.display.set_mode(value)
+        self.__updateDisplay()
+
+    def __handleFullscreen(self, value):
+        self.__updateDisplay()
 
     def __drawLayer(self, pos_reps):
         for num in sorted(pos_reps.keys()):

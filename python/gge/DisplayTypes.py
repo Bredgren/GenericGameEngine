@@ -188,6 +188,10 @@ class Resolution(SingletonAttribute):
     """Value type is Size."""
     pass
 
+class Fullscreen(SingletonAttribute):
+    """Value type is bool."""
+    pass
+
 class DisplayRep(SingletonAttribute):
     """Value type is DisplayRepType."""
     pass
